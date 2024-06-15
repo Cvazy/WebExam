@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="w-full h-full">
+    <div class="flex flex-col items-center gap-4 w-full h-full">
+      <div class="grid gap-4 w-full md:grid-cols-2">
+        <img
+            class="block rounded border border-solid border-black w-full"
+            src="{{ url_for('serve_image', filename=book_data.cover_name) }}"
+            alt="Title"
+            loading="lazy"
+            draggable="false"
+        >
+
+        <div class="flex flex-col items-start gap-2.5 w-full">
+          <h1 class="text-xl text-black font-medium text-left md:text-2xl">
+            {{ book_data.book_name }}
+          </h1>
+
+          {% if current_user.is_authenticated or current_user.can('edit', user) %}
+            <div class="flex justify-end w-full">
+              <div class="flex items-center flex-nowrap gap-2">
+                {% if current_user.is_authenticated and current_user.can('edit', user) %}
+                  <a
+                      href="{{ url_for('edit_book', book_id = book_data.book_id) }}"
+                      class="hover:scale-110"
+                  >
+                    <img
+                      class="block select-none w-[24px] h-[24px]"
+                      src="{{ url_for('static', filename='/images/edit.svg') }}"
+                      alt="Edit"
+                      loading="lazy"
+                      draggable="false"
+                    >
+                  </a>
+                {% endif %}
+
+                {% if current_user.is_authenticated and current_user.can('delete', user) %}
+                  <button
+                    type="button"
+                    onclick="deleteBook(this)"
+                    data-book-id="{{ book_data.book_id }}"
+                    data-book-name="{{ book_data.book_name }}"
+                    class="bg-transparent border-none hover:scale-110"
+                  >
+                    <img
+                      class="block select-none w-[24px] h-[24px]"
+                      src="{{ url_for('static', filename='/images/delete.svg') }}"
+                      alt="Delete"
+                      loading="lazy"
+                      draggable="false"
+                    >
+                  </button>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+
+          <p class="text-base text-black">
+            Автор: {{ book_data.author }}
+          </p>
+
+          <p class="text-base text-black">
+            Жанр: {{ book_data.genre }}
+          </p>
+
+          <p class="text-base text-black">
+            Год публикации: {{ book_data.year }}г
+          </p>
+
+          <p class="text-base text-black">
+            Издательство: {{ book_data.publishing_house }}
+          </p>
+
+          <p class="text-base text-black">
+            Количество страниц: {{ book_data.pages_qnt }}
+          </p>
+        </div>
+      </div>
+
+      <p class="text-base text-black whitespace-pre-line">{{ book_data.short_desc }}</p>
+
+      <div class="flex flex-col items-end gap-4 max-w-[720px] w-full">
+        {% if user_review %}
+          <div class="flex flex-col items-start gap-2 w-full">
+            <p class="text-base text-black">
+              Ваша рецензия
+            </p>
+
+            <div class="border border-solid border-black rounded w-full">
+              <div class="p-2 w-full">
+                <div class="flex flex-col gap-2 w-full">
+                  <div class="flex items-center justify-between gap-4 w-full">
+                    <div class="flex items-center flex-nowrap gap-2">
+                      <img
+                        class="block select-none w-[24px] h-[24px]"
+                        src="{{ url_for('static', filename='/images/profile.svg') }}"
+                        alt="Arrow"
+                        loading="lazy"
+                        draggable="false"
+                      >
+
+                      <p class="text-base text-black">
+                        {{ user_review.login }}
+                      </p>
+                    </div>
+
+                    <div class="flex items-center flex-nowrap gap-2">
+                      <img
+                          class="block select-none w-[24px] h-[24px]"
+                          src="{{ url_for('static', filename='/images/date.svg') }}"
+                          alt="Published at"
+                          loading="lazy"
+                          draggable="false"
+                      >
+
+                      <p class="text-base text-black">
+                        {{ user_review.publish_date }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <p class="text-black text-base">{{ user_review.text }}</p>
+
+                  <p class="text-black text-base">
+                    Ваша оценка: {{ user_review.mark }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <a href="{{ url_for('add_review', book_id = book_data.book_id) }}">
+            <button
+                type="button"
+                class="py-2 px-6 text-base font-medium text-black text-center bg-white rounded border border-solid border-black hover:scale-110">
+              Написать рецензию
+            </button>
+          </a>
+        {% endif %}
+
+        {% for review in reviews_data %}
+          <div class="border border-solid border-black rounded w-full">
+            <div class="p-2 w-full">
+              <div class="flex flex-col gap-2 w-full">
+                <div class="flex items-center justify-between gap-4 w-full">
+                  <div class="flex items-center flex-nowrap gap-2">
+                    <img
+                      class="block select-none w-[24px] h-[24px]"
+                      src="{{ url_for('static', filename='/images/profile.svg') }}"
+                      alt="Arrow"
+                      loading="lazy"
+                      draggable="false"
+                    >
+
+                    <p class="text-base text-black">
+                      {{ review.login }}
+                    </p>
+                  </div>
+
+                  <div class="flex items-center flex-nowrap gap-2">
+                    <img
+                        class="block select-none w-[24px] h-[24px]"
+                        src="{{ url_for('static', filename='/images/date.svg') }}"
+                        alt="Published at"
+                        loading="lazy"
+                        draggable="false"
+                    >
+
+                    <p class="text-base text-black">
+                      {{ review.publish_date }}
+                    </p>
+                  </div>
+                </div>
+
+                <p class="text-black text-base">{{ review.text }}</p>
+
+                <p class="text-black text-base">
+                  Оценка пользователя: {{ review.mark }}
+                </p>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

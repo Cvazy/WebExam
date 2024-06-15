@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta
+      name="viewport"
+      content="
+            width=device-width,
+            user-scalable=no,
+            initial-scale=1.0,
+            maximum-scale=1.0,
+            minimum-scale=1.0
+  ">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta
+      name="description"
+      content="Экзаменационный проект Мурахтанова Павла, 221-332"
+  />
+  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='/styles/output.css') }}">
+  <script src="{{ url_for('static', filename='/scripts/visiblePassword.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='/scripts/bookDelete.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='/scripts/bookReviewMarks.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='/scripts/loadImageForBook.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='/scripts/closeAlert.js') }}" defer></script>
+  <title>Экзаменационный проект</title>
+</head>
+<body>
+
+<div
+      id="modal"
+      class="fixed !hidden z-[9999] w-full h-full top-0 left-0 bg-[#00000080]"
+  >
+  <div class="flex justify-center items-center w-full h-full">
+    <div class="max-w-[420px] w-full bg-white rounded border border-solid border-black">
+      <div class="w-full p-4 sm:p-6 md:p-7 lg:p-8">
+        <div class="flex flex-col items-start gap-4 w-full h-full">
+          <p class="text-lg text-black font-medium text-nowrap lg:text-xl xl:text-2xl 2xl:text-3xl">
+            Удаление книги
+          </p>
+
+          <p class="text-sm text-black">
+            Вы уверены, что хотите удалить книгу
+            "<span id="book_name"></span>"?
+          </p>
+
+          <form method="post" action="remove" class="grid gap-2 w-full md:grid-cols-2 lg:gap-3">
+            <input type="hidden" name="book_id" id="book_id">
+
+            <button
+                type="button"
+                id="close_modal"
+                onclick="modalClose()"
+                class="bg-white border border-solid border-black text-center text-base text-black rounded px-4 py-2 w-full hover:bg-black hover:text-white"
+            >
+              Нет
+            </button>
+
+            <button
+                type="submit"
+                class="bg-black border border-solid border-black text-center text-base text-white rounded px-4 py-2 w-full hover:bg-white hover:text-black"
+            >
+              Да
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="flex flex-col items-center bg-white min-h-dvh w-full h-max relative">
+  <header class="z-[999] w-full sticky top-0 h-[88px] border-b border-solid border-[#B5B5B5] bg-white">
+    <div class="w-full h-full px-4 lg:px-7">
+      <div class="flex justify-center w-full h-full">
+        <div class="flex items-center justify-between max-w-[1120px] w-full h-full">
+          <a href="{{ url_for('index') }}" class="text-black text-nowrap text-lg hover:scale-110 xl:text-2xl">
+            Электронная библиотека
+          </a>
+
+          <div class="flex items-center gap-2 flex-nowrap">
+            <p class="text-base text-black">
+              {{ current_user.login }}
+            </p>
+
+            <a
+              href="{% if current_user.is_authenticated %}{{ url_for('logout') }}{% else %}{{ url_for('login') }}{% endif %}"
+              class="bg-black border border-solid border-black text-center text-base text-white rounded px-4 py-2 hover:bg-white hover:text-black"
+            >
+              {% if current_user.is_authenticated %}
+                Выйти
+              {% else %}
+                Войти
+              {% endif %}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, msg in messages %}
+        <div class="flex justify-center w-full mt-6">
+          <div class="max-w-[1120px] w-full">
+            <div class="w-full rounded alert alert-{{ category }}">
+              <div class="w-full p-4 flex items-start justify-between gap-4">
+                  <p class="text-base text-left text-black">
+                    {{ msg }}
+                  </p>
+
+                  <button
+                      type="button"
+                      class="bg-transparent border-none hover:scale-110"
+                      onclick="closeAlert(this)"
+                  >
+                    <img
+                        class="block select-none w-[24px] h-[24px]"
+                        src="{{ url_for('static', filename='/images/close.svg') }}"
+                        alt="Close"
+                        loading="lazy"
+                        draggable="false">
+                  </button>
+                </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+  {% endwith %}
+
+  <main class="flex flex-grow w-full h-full">
+    <div class="flex justify-center w-full h-full px-4 py-8 lg:px-7">
+      <div class="max-w-[1120px] w-full">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+  </main>
+
+  <footer class="w-full bg-black">
+    <div class="w-full h-full px-8 py-12">
+      <div class="flex justify-start w-full">
+        <p class="text-white text-2xl font-medium">
+          Мурахтанов Павел
+        </p>
+      </div>
+    </div>
+  </footer>
+</div>
+
+</body>
+</html>

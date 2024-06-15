@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="w-full h-full">
+    <div class="flex flex-col items-start gap-4 w-full h-full">
+      <h1 class="text-xl text-black font-medium text-center md:text-2xl">
+        Добавление отзыва
+      </h1>
+
+      <form
+          method="post"
+          class="flex flex-col items-end gap-4 w-full h-full"
+      >
+        <select
+            id="review_mark_text"
+            name="review_mark_text"
+            class="cursor-pointer border border-solid border-black rounded p-2 outline-none h-[42px] w-full md:w-auto hover:bg-black hover:text-white"
+        >
+          <option>Отлично</option>
+          <option>Хорошо</option>
+          <option>Удовлетворительно</option>
+          <option>Неудовлетворительно</option>
+          <option>Плохо</option>
+          <option>Ужасно</option>
+        </select>
+
+        <input
+            type="hidden"
+            name="review_mark_num"
+            id="review_mark_num"
+            value="5"
+        >
+
+        <textarea
+            name="review_text"
+            placeholder="Текст отзыва..."
+            class="p-2 border border-solid border-black rounded outline-none w-full min-w-full max-w-full min-h-[80px]"
+        ></textarea>
+
+        <button
+            type="submit"
+            class="py-2 px-6 text-base font-medium text-black text-center bg-white rounded border border-solid border-black w-full md:w-auto hover:scale-110"
+        >
+          Отправить
+        </button>
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% from 'book_form.html' import render_book_form %}
+{% block content %}
+  <div class="w-full h-full">
+    <div class="flex flex-col items-start gap-4 w-full h-full">
+      <h1 class="text-xl text-black font-medium text-center md:text-2xl">
+        Добавление книги
+      </h1>
+
+      {{ render_book_form(roles, data, errors, "create") }}
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="w-full h-full">
+    <div class="flex flex-col items-center justify-center w-full">
+      <div class="flex flex-col items-center gap-4 w-full">
+        <h1 class="text-xl text-black font-medium text-center md:text-2xl">
+          Авторизация
+        </h1>
+
+        <form method="post" class="flex flex-col items-center gap-4 max-w-[420px] w-full">
+          <input
+            type="text"
+            name="user_login"
+            placeholder="Ваш логин..."
+            class="border border-solid border-black rounded outline-none p-2 w-full h-[42px]"
+          >
+
+          <div class="relative w-full">
+            <input
+              type="password"
+              name="user_password"
+              placeholder="Ваш пароль..."
+              class="border border-solid border-black rounded outline-none pl-2 py-2 pr-12 w-full h-[42px]"
+            >
+
+            <button
+              type="button"
+              id="visiblePassword"
+              class="absolute top-2.5 right-4 bg-transparent border-none text-[#ff2c41] hover:scale-110"
+            >
+              <i class="text-xl text-black fa-solid fa-eye"></i>
+            </button>
+          </div>
+
+          <label class="flex items-center gap-2 justify-start w-full">
+            <input
+                type="checkbox"
+                name="user_remember"
+            >
+
+            Запомнить меня
+          </label>
+
+          <button
+              type="submit"
+              class="bg-black border border-solid border-black text-center text-base text-white rounded px-4 py-2 w-full hover:bg-white hover:text-black"
+          >
+            Войти
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    transition: .3s all;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
+
+a {
+  display: block;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+input {
+  outline: none;
+}
+
+.pagination_item,
+.pagination_arrow {
+    @apply block text-black border border-solid border-black rounded p-2 text-center h-[42px] w-[42px]
+}
+
+.pagination_item {
+    @apply hover:bg-black hover:text-white
+}
+
+.pagination_arrow {
+    @apply hover:scale-110
+}
+
+.pagination_active {
+    @apply !text-white !bg-black hover:!bg-white hover:!text-black
+}
+
+.alert-success {
+    @apply bg-[#71c0298f]
+}
+
+.alert-danger {
+    @apply bg-[#c029298f]
+}
+
+.alert-info {
+    @apply bg-[#dfd04aa8]
+}
