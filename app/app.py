@@ -1,3 +1,4 @@
+import functools
 import hashlib
 import os
 import random
@@ -40,6 +41,29 @@ class User(UserMixin):
             return False
         else:
             return method()
+
+
+def check_rights(action):
+    def decorator(f):
+        @functools.wraps(f)
+        def wrapper(*args, **kwargs):
+            record = None
+            if "user_id" in kwargs:
+                try:
+                    from app import db
+                    cnx = db.connect()
+                    with cnx.cursor(named_tuple=True) as cursor:
+                        query = ("SELECT * FROM users WHERE id = %s")
+                        cursor.execute(query, (kwargs["user_id"],))
+                        record = cursor.fetchone()
+                except DatabaseError:
+                        record = None
+            if not current_user.can(action, record):
+                flash('У вас недостаточно прав для выполнения данного действия', 'danger')
+                return redirect(url_for('index'))
+            return f(*args, **kwargs)
+        return wrapper
+    return decorator
 
 
 @login_manager.user_loader
@@ -147,6 +171,7 @@ def book_details(book_id):
 
 @application.route('/books/new', methods=['GET', 'POST'])
 @login_required
+@check_rights('create')
 def new_book():
     if request.method == 'POST':
         try:
@@ -205,6 +230,7 @@ def new_book():
 
 @application.route('/books/<int:book_id>/edit', methods=['GET', 'POST'])
 @login_required
+@check_rights('edit')
 def edit_book(book_id):
     book_data = {}
 
