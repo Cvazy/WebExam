@@ -1,5 +1,6 @@
 from flask_login import current_user
 
+
 class UsersPolicy:
     def __init__(self, record):
         self.record = record

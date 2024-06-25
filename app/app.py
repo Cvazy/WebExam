@@ -4,21 +4,21 @@ import random
 from datetime import datetime
 
 from flask import Flask, render_template, request, redirect, url_for, flash, current_app, send_from_directory
-from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user
+from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 from mysql.connector.errors import DatabaseError
 from werkzeug.utils import secure_filename
 
 from mysqldb import DatabaseConnector
 from users_policy import UsersPolicy
 
-app = Flask(__name__)
-app.config.from_pyfile("config.py")
+application = Flask(__name__)
+application.config.from_pyfile("config.py")
 login_manager = LoginManager()
 login_manager.login_view = 'login'
-login_manager.login_message = 'Пожалуйста, авторизуйтесь.'
-login_manager.login_message_category = 'warning'
-login_manager.init_app(app)
-db = DatabaseConnector(app)
+login_manager.login_message = 'Для выполнения данного действия необходимо пройти процедуру аутентификации'
+login_manager.login_message_category = 'danger'
+login_manager.init_app(application)
+db = DatabaseConnector(application)
 
 
 class User(UserMixin):
@@ -54,7 +54,7 @@ def load_user(user_id):
     return None
 
 
-@app.route('/login', methods=['post', 'get'])
+@application.route('/login', methods=['post', 'get'])
 def login():
     if request.method == 'POST':
         user_login = request.form['user_login']
@@ -78,13 +78,13 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/logout')
+@application.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('index'))
 
 
-@app.route('/')
+@application.route('/')
 def index():
     page = request.args.get('page', 1, type=int)
     per_page = 6
@@ -116,7 +116,7 @@ def index():
     return render_template('index.html', books_list=books_list, page=page, total_pages=total_pages)
 
 
-@app.route('/books/<int:book_id>/view')
+@application.route('/books/<int:book_id>/view')
 def book_details(book_id):
     cnx = db.connect()
 
@@ -145,7 +145,8 @@ def book_details(book_id):
     return render_template('book_details.html', book_data=book_data, reviews_data=reviews_data, user_review=user_review)
 
 
-@app.route('/books/new', methods=['GET', 'POST'])
+@application.route('/books/new', methods=['GET', 'POST'])
+@login_required
 def new_book():
     if request.method == 'POST':
         try:
@@ -202,7 +203,8 @@ def new_book():
     return render_template('add_book.html')
 
 
-@app.route('/books/<int:book_id>/edit', methods=['GET', 'POST'])
+@application.route('/books/<int:book_id>/edit', methods=['GET', 'POST'])
+@login_required
 def edit_book(book_id):
     book_data = {}
 
@@ -258,7 +260,7 @@ def edit_book(book_id):
     return render_template("edit_book.html", book_data=book_data)
 
 
-@app.route('/remove', methods=['GET', 'POST'])
+@application.route('/remove', methods=['GET', 'POST'])
 def remove_book():
     try:
         cnx = db.connect()
@@ -278,7 +280,7 @@ def remove_book():
     return redirect(url_for('index'))
 
 
-@app.route('/book/<int:book_id>/review', methods=['GET', 'POST'])
+@application.route('/book/<int:book_id>/review', methods=['GET', 'POST'])
 def add_review(book_id):
     current_date = datetime.now()
 
@@ -316,10 +318,10 @@ def add_review(book_id):
         return redirect(url_for('index'))
 
 
-@app.route('/media/images/<filename>')
+@application.route('/media/images/<filename>')
 def serve_image(filename):
     return send_from_directory('media/images', filename)
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    application.run(debug=True)

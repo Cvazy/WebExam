@@ -17,7 +17,7 @@
             {{ book_data.book_name }}
           </h1>
 
-          {% if current_user.is_authenticated or current_user.can('edit', user) %}
+          {% if current_user.is_authenticated and current_user.can('edit', user) %}
             <div class="flex justify-end w-full">
               <div class="flex items-center flex-nowrap gap-2">
                 {% if current_user.is_authenticated and current_user.can('edit', user) %}
